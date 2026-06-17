@@ -3,6 +3,8 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12
 
 const dietCollection = collection(db, "diet_entries");
 const budgetCollection = collection(db, "budget_items");
+const choresCollection = collection(db, "chores");
+const gamesCollection = collection(db, "games");
 
 // ----- Diet heatmaps -----
 
@@ -100,15 +102,12 @@ onSnapshot(budgetCollection, function(snapshot) {
   const totalCost = items.reduce(function(sum, item) { return sum + item.cost; }, 0);
   const overallPercent = totalCost > 0 ? Math.min(100, Math.round((totalSaved / totalCost) * 100)) : 0;
 
-  // The "next up" target: the highest-weight item that's both unlocked
-  // and not yet fully funded — literally what you should save toward next.
   const candidates = items
     .filter(function(item) { return isUnlocked(item, items) && item.saved < item.cost; })
     .sort(function(a, b) { return b.weight - a.weight; });
 
   const nextUp = candidates[0];
 
-  // Each funded item gets a pie slice sized by its share of your TOTAL saved money.
   let cumulative = 0;
   const slices = items
     .filter(function(item) { return item.saved > 0; })
@@ -154,6 +153,73 @@ onSnapshot(budgetCollection, function(snapshot) {
       <div class="entry-meta">How your savings are distributed</div>
       <div class="pie-chart" style="${pieStyle}"></div>
       <div class="pie-legend">${legendHtml}</div>
+    </div>
+  `;
+});
+
+// ----- Chores overview -----
+
+onSnapshot(choresCollection, function(snapshot) {
+  const chores = [];
+  snapshot.forEach(function(docSnap) { chores.push(docSnap.data()); });
+
+  const container = document.getElementById('chores-overview');
+
+  if (chores.length === 0) {
+    container.innerHTML = '<p class="entry-meta">No chores added yet.</p>';
+    return;
+  }
+
+  const openChores = chores.filter(function(c) { return !c.done; });
+  const today = new Date().toISOString().split('T')[0];
+  const overdue = openChores.filter(function(c) { return c.due && c.due < today; });
+
+  const counts = { Olly: 0, Sav: 0, Both: 0 };
+  openChores.forEach(function(c) {
+    if (counts[c.who] !== undefined) counts[c.who] += 1;
+  });
+
+  container.innerHTML = `
+    <div class="entry-card">
+      <div class="entry-meta">Open tasks</div>
+      <strong>${openChores.length} chore${openChores.length === 1 ? '' : 's'} still open</strong>
+      ${overdue.length > 0 ? `<p class="er-warning">⚠️ ${overdue.length} overdue</p>` : ''}
+      <div class="who-breakdown">
+        <span>Olly: ${counts.Olly}</span>
+        <span>Sav: ${counts.Sav}</span>
+        <span>Both: ${counts.Both}</span>
+      </div>
+    </div>
+  `;
+});
+
+// ----- Today's Pick (game) -----
+
+function getDaySeed() {
+  const today = new Date();
+  return parseInt(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`);
+}
+
+onSnapshot(gamesCollection, function(snapshot) {
+  const games = [];
+  snapshot.forEach(function(docSnap) { games.push(docSnap.data()); });
+
+  const container = document.getElementById('today-pick');
+
+  if (games.length === 0) {
+    container.innerHTML = '<p class="entry-meta">Add some games to your library to get a daily pick!</p>';
+    return;
+  }
+
+  const seed = getDaySeed();
+  const index = seed % games.length;
+  const pick = games[index];
+
+  container.innerHTML = `
+    <div class="entry-card quiz-winner">
+      <div class="entry-meta">Today's pick</div>
+      <strong style="font-size: 1.3em;">${pick.name}</strong>
+      ${(pick.tags || []).length > 0 ? `<div class="entry-meta">${pick.tags.join(', ')}</div>` : ''}
     </div>
   `;
 });
