@@ -98,6 +98,10 @@
       color: var(--color-heading);
       margin-top: 0;
     }
+    section h3 {
+      font-family: var(--font-heading);
+      color: var(--color-heading);
+    }
 
     .entry-form {
       display: flex;
@@ -223,15 +227,25 @@
       color: #c0392b;
     }
 
-    /* ===== GAME PICKER ===== */
-    .quiz-winner {
-      text-align: center;
-      background: var(--color-nav-bg);
-      border: 2px solid var(--color-nav-active);
+    /* ===== HOME DASHBOARD HEATMAP ===== */
+    .heatmap-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
     }
-    section h3 {
-      font-family: var(--font-heading);
-      color: var(--color-heading);
+    .heatmap-table th, .heatmap-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .heatmap-table th {
+      font-weight: 700;
+      opacity: 0.7;
+      background: rgba(0,0,0,0.04);
     }
   </style>
 </head>
@@ -244,4 +258,160 @@
 
   <nav>
     <button class="tab-button active" data-tab="Home">Home</button>
-    <button class="
+    <button class="tab-button" data-tab="diet">Dietary Diary</button>
+    <button class="tab-button" data-tab="chores">Chores</button>
+    <button class="tab-button" data-tab="budget">Budget</button>
+    <button class="tab-button" data-tab="games">Gamba</button>
+  </nav>
+
+  <main>
+    <section id="Home" class="active">
+      <h2>Hello Lover</h2>
+      <p>This is the place we call home. It allows all of our musings to co-exist</p>
+
+      <h3>Olly's Diary Patterns</h3>
+      <div id="olly-heatmap"></div>
+
+      <h3>Sav's Diary Patterns</h3>
+      <div id="sav-heatmap"></div>
+    </section>
+
+    <section id="diet">
+      <h2>Dietary Diary</h2>
+      <p>How did that meal make you feel today?</p>
+
+      <form id="diet-form" class="entry-form">
+        <label>Who's logging this?
+          <select id="diet-who">
+            <option value="Olly">Olly</option>
+            <option value="Sav">Sav</option>
+          </select>
+        </label>
+        <label>Date
+          <input type="date" id="diet-date" required>
+        </label>
+        <label>Meal
+          <select id="diet-meal">
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Snack</option>
+          </select>
+        </label>
+        <label>What did you eat?
+          <input type="text" id="diet-food" required>
+        </label>
+        <label>Brain fog (0 = clear headed, 5 = so foggy)
+          <select id="diet-brainfog">
+            <option value="0">0 — Clear headed</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 — So foggy</option>
+          </select>
+        </label>
+        <label>Stomach pain (0 = clean and ready, 5 = call the ER)
+          <select id="diet-stomach">
+            <option value="0">0 — Clean and ready</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 — Call the ER</option>
+          </select>
+        </label>
+        <button type="submit">Log it</button>
+      </form>
+
+      <div id="diet-list" class="entry-list"></div>
+    </section>
+
+    <section id="chores">
+      <h2>Chores</h2>
+      <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
+
+      <form id="chores-form" class="entry-form">
+        <label>Task
+          <input type="text" id="chore-task" required>
+        </label>
+        <label>Who's doing it?
+          <select id="chore-who">
+            <option value="Olly">Olly</option>
+            <option value="Sav">Sav</option>
+            <option value="Both">Both</option>
+          </select>
+        </label>
+        <label>Due date
+          <input type="date" id="chore-due">
+        </label>
+        <button type="submit">Add to the list</button>
+      </form>
+
+      <div id="chores-list" class="entry-list"></div>
+    </section>
+
+    <section id="budget">
+      <h2>Budget</h2>
+      <p>Can we buy that? I'm so happy you asked</p>
+
+      <form id="budget-form" class="entry-form">
+        <label>Item name
+          <input type="text" id="budget-name" required>
+        </label>
+        <label>Cost ($)
+          <input type="number" id="budget-cost" min="0" step="0.01" required>
+        </label>
+        <label>Already saved ($)
+          <input type="number" id="budget-saved" min="0" step="0.01" value="0">
+        </label>
+        <label>How badly do we want it? (1 = meh, 10 = need it now): <span id="budget-weight-display">5</span>
+          <input type="range" id="budget-weight" min="1" max="10" value="5">
+        </label>
+        <label>Depends on (optional — must fund this other item first)
+          <select id="budget-dependson">
+            <option value="">None</option>
+          </select>
+        </label>
+        <button type="submit">Add to wishlist</button>
+      </form>
+
+      <div id="budget-list" class="entry-list"></div>
+    </section>
+
+    <section id="games">
+      <h2>Game Picker</h2>
+      <p>BUZZFEED: Which game is so you right now?</p>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const sections = document.querySelectorAll('main section');
+
+    buttons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const target = button.getAttribute('data-tab');
+
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+        button.classList.add('active');
+
+        sections.forEach(function(s) {
+          if (s.id === target) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+      });
+    });
+  </script>
+
+  <script type="module" src="firebase-init.js"></script>
+  <script type="module" src="diet.js"></script>
+  <script type="module" src="chores.js"></script>
+  <script type="module" src="budget.js"></script>
+  <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>
