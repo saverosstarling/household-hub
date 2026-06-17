@@ -11,49 +11,103 @@
   <!-- The text shown in the browser tab. Change this to whatever you want the title to be -->
 
   <style>
+    /* ===== CUSTOM FONTS =====
+       Each rule loads one file you uploaded and gives it a name to use below. */
+    @font-face {
+      font-family: 'OrbitronBlack';
+      src: url('OrbitronBlack-y4XZ.otf') format('opentype');
+    }
+    @font-face {
+      font-family: 'BigNoodleTitling';
+      src: url('big_noodle_titling_oblique.ttf') format('truetype');
+
+ /* ===== VARIABLES =====
+       Change any value here and it updates everywhere that variable is used.
+       This is your site's "control panel" for looks. */
+:root {
+  --color-bg: #8A9A5B;     /* page background */
+  --color-card-bg: #ECE580;      /*b ackground of each tab's content card */
+  --color-text: #3b3b3b;      /* body text color, on our card */
+  --color-heading: #9069A6;      /* color of Titles */
+  --color-nav-bg: #ECBE52;      /* button color when NOT selected */
+  --color-nav-active: #D69141      /* button color when selected */
+
+  --font-heading: 'BigNoodleTitling', sans-serif;
+  --font-body: 'OrbitronBlack', sans-serif;
+}
     /* This area is about how our site looks, NOT behavior */
 body {
-  font-family:Arial, sans-serif; 
-  margin: 0;                /* removes default white gap browsers put around pages */
-  background: #8A9A5B;      /* page background color */
-  color: #9069A6;          /* page text color */
+      font-family: var(--font-body);
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
 }
+      
 header {
-  padding: 20px;     /* space insider the header, between edges and content */
+  padding: 30px 20px 10px;     /* space insider the header, between edges and content */
   text-align: center;     /* centers "Our Home Hub" title */
   border-bottom: 2px solid #ccc;    /* a thine line under the header */
 }
+
+header h1 {
+  font-family: var(--font-heading);
+  color: var(--color-heading);
+  margin: 0;
+  font-size: 2.5rem;
+    }
+      
 nav {
       display: flex;
       justify-content: center;
       gap: 10px;
-      padding: 15px;
+      padding: 20px;
       flex-wrap: wrap;
     }
 nav button {
-      padding: 10px 18px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 10px 20px;
       border: none;
       border-radius: 50px;       /* your pill shape, now correctly targeting the buttons */
-      background: #ECBE52;
+      background: var(color-nav-bg);
       cursor: crosshair;          /* fixed syntax */
       font-size: 15px;
+      transition: transform 0.15s ease;
     }
+
+nav button hover {
+  transform: translateY(-2px);
+}
+      
 nav button.active {
   /* This style only applies to whichever button is currently "active" or chosen. The stuff below allows me to edit based off of condition */
   background: #D69141;  /* button color when selected */
   color: orange;
 }
+      
 main {
   max-width: 700px;      /* stops content from stretching too wide on a bigger screen */
   margin: 0 auto;      /* centers horizontally */
-  padding: 20px;
+  padding: 0 20px 40px;
 }
 section {
   display: none;      /* by default, every tab's content is hidden */
+  background: var(--color-card-bg);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
+      
 section.active {
   display: block;      /* showing nothing but the active class */
 }
+
+section h2 {
+      font-family: var(--font-heading);
+      color: var(--color-heading);
+      margin-top: 0;
+}
+    
   </style>
 </head>
   <body>
