@@ -524,39 +524,58 @@
       <div id="diet-list" class="entry-list"></div>
     </section>
 
-    <section id="chores">
-      <h2>Chores</h2>
-      <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
+   <section id="chores">
+  <h2>Chores</h2>
+  <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
 
-      <div class="calendar-nav">
-        <button id="cal-prev" type="button">&larr;</button>
-        <span id="chores-calendar-label"></span>
-        <button id="cal-next" type="button">&rarr;</button>
-      </div>
-      <div id="chores-calendar-grid" class="calendar-grid"></div>
-      <div id="chores-day-panel"></div>
+  <h3>Evening Themes</h3>
+  <div class="entry-card">
+    <label>Mode
+      <select id="theme-mode">
+        <option value="schedule">Set Schedule</option>
+        <option value="random">Randomizer</option>
+      </select>
+    </label>
+    <div id="theme-schedule-editor"></div>
+    <h4>Theme List</h4>
+    <div id="theme-list-display"></div>
+    <form id="theme-add-form" class="entry-form">
+      <label>Add a theme
+        <input type="text" id="new-theme-name" required>
+      </label>
+      <button type="submit">Add Theme</button>
+    </form>
+  </div>
 
-      <h3>Add a Chore (anytime)</h3>
-      <form id="chores-form" class="entry-form">
-        <label>Task
-          <input type="text" id="chore-task" required>
-        </label>
-        <label>Who's doing it?
-          <select id="chore-who">
-            <option value="Olly">Olly</option>
-            <option value="Sav">Sav</option>
-            <option value="Both">Both</option>
-          </select>
-        </label>
-        <label>Due date
-          <input type="date" id="chore-due">
-        </label>
-        <button type="submit">Add to the list</button>
-      </form>
+  <div class="calendar-nav">
+    <button id="cal-prev" type="button">&larr;</button>
+    <span id="chores-calendar-label"></span>
+    <button id="cal-next" type="button">&rarr;</button>
+  </div>
+  <div id="chores-calendar-grid" class="calendar-grid"></div>
+  <div id="chores-day-panel"></div>
 
-      <h3>All Chores</h3>
-      <div id="chores-list" class="entry-list"></div>
-    </section>
+  <h3>Add a Chore (anytime)</h3>
+  <form id="chores-form" class="entry-form">
+    <label>Task
+      <input type="text" id="chore-task" required>
+    </label>
+    <label>Who's doing it?
+      <select id="chore-who">
+        <option value="Olly">Olly</option>
+        <option value="Sav">Sav</option>
+        <option value="Both">Both</option>
+      </select>
+    </label>
+    <label>Due date
+      <input type="date" id="chore-due">
+    </label>
+    <button type="submit">Add to the list</button>
+  </form>
+
+  <h3>All Chores</h3>
+  <div id="chores-list" class="entry-list"></div>
+</section>
 
     <section id="budget">
       <h2>Budget</h2>
