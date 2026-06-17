@@ -303,6 +303,44 @@
       border-radius: 3px;
       display: inline-block;
     }
+
+    /* ===== GAME PICKER ===== */
+    .tag-checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tag-checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 13px;
+    }
+    .quiz-winner {
+      text-align: center;
+      background: var(--color-nav-bg);
+      border: 2px solid var(--color-nav-active);
+    }
+    .game-delete {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 50px;
+      background: #c0392b;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 8px;
+      transition: transform 0.15s ease;
+    }
+    .game-delete:hover {
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -441,6 +479,49 @@
     <section id="games">
       <h2>Game Picker</h2>
       <p>BUZZFEED: Which game is so you right now?</p>
+
+      <h3>Your Game Library</h3>
+      <form id="game-add-form" class="entry-form">
+        <label>Game name
+          <input type="text" id="game-name" required>
+        </label>
+        <label>Tags (check all that apply)</label>
+        <div class="tag-checkboxes">
+          <label><input type="checkbox" value="Narrative" class="game-tag"> Narrative</label>
+          <label><input type="checkbox" value="Female Protagonist" class="game-tag"> Female Protagonist</label>
+          <label><input type="checkbox" value="Adventure" class="game-tag"> Adventure</label>
+          <label><input type="checkbox" value="Cozy" class="game-tag"> Cozy / Lazy</label>
+          <label><input type="checkbox" value="Management Sim" class="game-tag"> Management Sim</label>
+          <label><input type="checkbox" value="Dress-Up" class="game-tag"> Dress-Up / Customization</label>
+        </div>
+        <button type="submit">Add to library</button>
+      </form>
+      <div id="game-library-list" class="entry-list"></div>
+
+      <h3>Take the Quiz</h3>
+      <form id="quiz-form" class="entry-form">
+        <label>Do you want a story, or just vibes?
+          <select id="quiz-q1">
+            <option value="Narrative">A real story, please</option>
+            <option value="Cozy">Just vibes</option>
+          </select>
+        </label>
+        <label>Adventure or chill?
+          <select id="quiz-q2">
+            <option value="Adventure">Take me on an adventure</option>
+            <option value="Cozy">I want to relax</option>
+          </select>
+        </label>
+        <label>What's the energy tonight?
+          <select id="quiz-q3">
+            <option value="Management Sim">I want to organize/build something</option>
+            <option value="Dress-Up">I want to play dress-up</option>
+            <option value="Female Protagonist">I want to be someone else for a while</option>
+          </select>
+        </label>
+        <button type="submit">Pick my game</button>
+      </form>
+      <div id="quiz-result"></div>
     </section>
   </main>
 
@@ -471,6 +552,7 @@
   <script type="module" src="chores.js"></script>
   <script type="module" src="budget.js"></script>
   <script type="module" src="dashboard.js"></script>
+  <script type="module" src="game-quiz.js"></script>
 
 </body>
 </html>
