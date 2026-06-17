@@ -51,14 +51,6 @@
       margin-top: 6px;
     }
 
-    .who-breakdown {
-  display: flex;
-  gap: 16px;
-  margin-top: 8px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
     nav {
       display: flex;
       justify-content: center;
@@ -312,7 +304,6 @@
       display: inline-block;
     }
 
-    /* ===== GAME PICKER ===== */
     .tag-checkboxes {
       display: flex;
       flex-wrap: wrap;
@@ -349,6 +340,101 @@
     .game-delete:hover {
       transform: translateY(-2px);
     }
+
+    .who-breakdown {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ===== CHORES CALENDAR ===== */
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .calendar-nav button {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 50px;
+      background: var(--color-nav-bg);
+      cursor: pointer;
+    }
+    .calendar-nav span {
+      font-family: var(--font-heading);
+      color: var(--color-heading);
+      font-size: 1.2em;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+    .calendar-day-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.6;
+      padding: 4px 0;
+    }
+    .calendar-cell {
+      background: white;
+      border-radius: 8px;
+      min-height: 50px;
+      padding: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s ease;
+    }
+    .calendar-cell:hover {
+      transform: scale(1.05);
+    }
+    .calendar-cell.empty {
+      background: transparent;
+      cursor: default;
+    }
+    .calendar-cell.empty:hover {
+      transform: none;
+    }
+    .calendar-day-number {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .calendar-cell.day-has-chores {
+      background: #fff3cd;
+      border: 2px solid var(--color-nav-active);
+    }
+    .calendar-cell.day-complete {
+      background: #d4edda;
+      border: 2px solid #2e7d32;
+    }
+    .calendar-dot-count {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 10px;
+      background: var(--color-nav-active);
+      color: white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #chores-day-panel {
+      margin-top: 16px;
+    }
+    #chores-day-panel h4 {
+      font-family: var(--font-heading);
+      color: var(--color-heading);
+    }
   </style>
 </head>
 <body>
@@ -368,24 +454,24 @@
 
   <main>
     <section id="Home" class="active">
-  <h2>Hello Lover</h2>
-  <p>This is the place we call home. It allows all of our musings to co-exist</p>
+      <h2>Hello Lover</h2>
+      <p>This is the place we call home. It allows all of our musings to co-exist</p>
 
-  <h3>Today's Pick</h3>
-  <div id="today-pick"></div>
+      <h3>Today's Pick</h3>
+      <div id="today-pick"></div>
 
-  <h3>Chores Overview</h3>
-  <div id="chores-overview"></div>
+      <h3>Chores Overview</h3>
+      <div id="chores-overview"></div>
 
-  <h3>Budget Snapshot</h3>
-  <div id="budget-overview"></div>
+      <h3>Budget Snapshot</h3>
+      <div id="budget-overview"></div>
 
-  <h3>Olly's Diary Patterns</h3>
-  <div id="olly-heatmap"></div>
+      <h3>Olly's Diary Patterns</h3>
+      <div id="olly-heatmap"></div>
 
-  <h3>Sav's Diary Patterns</h3>
-  <div id="sav-heatmap"></div>
-</section>
+      <h3>Sav's Diary Patterns</h3>
+      <div id="sav-heatmap"></div>
+    </section>
 
     <section id="diet">
       <h2>Dietary Diary</h2>
@@ -442,6 +528,15 @@
       <h2>Chores</h2>
       <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
 
+      <div class="calendar-nav">
+        <button id="cal-prev" type="button">&larr;</button>
+        <span id="chores-calendar-label"></span>
+        <button id="cal-next" type="button">&rarr;</button>
+      </div>
+      <div id="chores-calendar-grid" class="calendar-grid"></div>
+      <div id="chores-day-panel"></div>
+
+      <h3>Add a Chore (anytime)</h3>
       <form id="chores-form" class="entry-form">
         <label>Task
           <input type="text" id="chore-task" required>
@@ -459,6 +554,7 @@
         <button type="submit">Add to the list</button>
       </form>
 
+      <h3>All Chores</h3>
       <div id="chores-list" class="entry-list"></div>
     </section>
 
