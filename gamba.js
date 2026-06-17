@@ -15,36 +15,23 @@ const gamesCollection = collection(db, "games");
 const gameAddForm = document.getElementById('game-add-form');
 const gameLibraryList = document.getElementById('game-library-list');
 
-// Wire up each trait slider to live-update its number display.
-['energy', 'length', 'players', 'mood'].forEach(function(trait) {
-  const slider = document.getElementById('game-' + trait);
-  const display = document.getElementById('game-' + trait + '-display');
-  slider.addEventListener('input', function() {
-    display.textContent = slider.value;
-  });
-});
-
 gameAddForm.addEventListener('submit', async function(event) {
   event.preventDefault();
 
+  // Gather every checked tag checkbox into a simple list, e.g. ["Narrative", "Adventure"].
+  const checkedTags = Array.from(document.querySelectorAll('.game-tag:checked')).map(function(cb) {
+    return cb.value;
+  });
+
   await addDoc(gamesCollection, {
     name: document.getElementById('game-name').value,
-    energy: parseInt(document.getElementById('game-energy').value),
-    length: parseInt(document.getElementById('game-length').value),
-    players: parseInt(document.getElementById('game-players').value),
-    mood: parseInt(document.getElementById('game-mood').value),
+    tags: checkedTags,
     createdAt: serverTimestamp()
   });
 
   gameAddForm.reset();
-  ['energy', 'length', 'players', 'mood'].forEach(function(trait) {
-    document.getElementById('game-' + trait).value = 3;
-    document.getElementById('game-' + trait + '-display').textContent = '3';
-  });
 });
 
-// Keep an always-current copy of your library in memory, so the quiz can use
-// it instantly when submitted, without a separate trip to the database.
 let libraryCache = [];
 
 const gamesQuery = query(gamesCollection, orderBy('createdAt', 'desc'));
@@ -61,7 +48,7 @@ onSnapshot(gamesQuery, function(snapshot) {
     card.className = 'entry-card';
     card.innerHTML = `
       <strong>${game.name}</strong>
-      <div class="entry-meta">Energy ${game.energy} · Length ${game.length} · Players ${game.players} · Mood ${game.mood}</div>
+      <div class="entry-meta">${(game.tags || []).join(', ') || 'No tags yet'}</div>
       <button class="game-delete">&times; Remove</button>
     `;
     card.querySelector('.game-delete').addEventListener('click', async function() {
@@ -84,38 +71,42 @@ quizForm.addEventListener('submit', function(event) {
     return;
   }
 
-  // Build a "target profile" out of your answers — the kind of experience you're after right now.
-  const target = {
-    energy: parseInt(document.getElementById('quiz-energy').value),
-    length: parseInt(document.getElementById('quiz-length').value),
-    players: parseInt(document.getElementById('quiz-players').value),
-    mood: parseInt(document.getElementById('quiz-mood').value)
-  };
+  // Tally up points per tag based on your answers.
+  const scores = {};
+  function addPoint(tag) {
+    scores[tag] = (scores[tag] || 0) + 1;
+  }
+  addPoint(document.getElementById('quiz-q1').value);
+  addPoint(document.getElementById('quiz-q2').value);
+  addPoint(document.getElementById('quiz-q3').value);
 
-  // For each game, measure how far its traits are from your target —
-  // squaring each difference means bigger mismatches count extra, and
-  // negative differences can't cancel out positive ones. Whichever game
-  // ends up with the smallest total distance is the closest match.
-  let bestGame = null;
-  let bestDistance = Infinity;
-
-  libraryCache.forEach(function(game) {
-    const distance =
-      Math.pow(game.energy - target.energy, 2) +
-      Math.pow(game.length - target.length, 2) +
-      Math.pow(game.players - target.players, 2) +
-      Math.pow(game.mood - target.mood, 2);
-
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestGame = game;
+  // Whichever tag scored highest "wins."
+  let winningTag = null;
+  let highestScore = -1;
+  for (const tag in scores) {
+    if (scores[tag] > highestScore) {
+      highestScore = scores[tag];
+      winningTag = tag;
     }
+  }
+
+  // Every game in your library carrying that tag is a valid candidate.
+  const matches = libraryCache.filter(function(game) {
+    return (game.tags || []).includes(winningTag);
   });
+
+  if (matches.length === 0) {
+    quizResult.innerHTML = `<div class="entry-card">No games tagged "${winningTag}" yet — add one to your library that fits!</div>`;
+    return;
+  }
+
+  // More than one match? Random pick breaks the tie.
+  const winner = matches[Math.floor(Math.random() * matches.length)];
 
   quizResult.innerHTML = `
     <div class="entry-card quiz-winner">
-      <div class="entry-meta">Tonight's pick:</div>
-      <strong style="font-size: 1.4em;">${bestGame.name}</strong>
+      <div class="entry-meta">Tonight's vibe: ${winningTag}</div>
+      <strong style="font-size: 1.4em;">${winner.name}</strong>
     </div>
   `;
 });
