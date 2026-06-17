@@ -180,6 +180,49 @@
     .chore-delete:hover {
       color: #c0392b;
     }
+
+    /* ===== BUDGET ===== */
+    .budget-locked {
+      opacity: 0.55;
+    }
+    .progress-track {
+      background: #ddd;
+      border-radius: 50px;
+      height: 10px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: var(--color-nav-active);
+      height: 100%;
+    }
+    .budget-ready {
+      color: #2e7d32;
+      font-weight: 700;
+      margin: 4px 0;
+    }
+    .budget-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .budget-actions button {
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 50px;
+      background: var(--color-nav-bg);
+      cursor: pointer;
+    }
+    .budget-delete {
+      background: none !important;
+      color: #999;
+      font-size: 16px;
+    }
+    .budget-delete:hover {
+      color: #c0392b;
+    }
   </style>
 </head>
 <body>
@@ -223,4 +266,115 @@
           <input type="text" id="diet-food" required>
         </label>
         <label>Brain fog (0 = clear headed, 5 = so foggy)
-          <select
+          <select id="diet-brainfog">
+            <option value="0">0 — Clear headed</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 — So foggy</option>
+          </select>
+        </label>
+        <label>Stomach pain (0 = clean and ready, 5 = call the ER)
+          <select id="diet-stomach">
+            <option value="0">0 — Clean and ready</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 — Call the ER</option>
+          </select>
+        </label>
+        <button type="submit">Log it</button>
+      </form>
+
+      <div id="diet-list" class="entry-list"></div>
+    </section>
+
+    <section id="chores">
+      <h2>Chores</h2>
+      <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
+
+      <form id="chores-form" class="entry-form">
+        <label>Task
+          <input type="text" id="chore-task" required>
+        </label>
+        <label>Who's doing it?
+          <select id="chore-who">
+            <option value="Olly">Olly</option>
+            <option value="Sav">Sav</option>
+            <option value="Both">Both</option>
+          </select>
+        </label>
+        <label>Due date
+          <input type="date" id="chore-due">
+        </label>
+        <button type="submit">Add to the list</button>
+      </form>
+
+      <div id="chores-list" class="entry-list"></div>
+    </section>
+
+    <section id="budget">
+      <h2>Budget</h2>
+      <p>Can we buy that? I'm so happy you asked</p>
+
+      <form id="budget-form" class="entry-form">
+        <label>Item name
+          <input type="text" id="budget-name" required>
+        </label>
+        <label>Cost ($)
+          <input type="number" id="budget-cost" min="0" step="0.01" required>
+        </label>
+        <label>Already saved ($)
+          <input type="number" id="budget-saved" min="0" step="0.01" value="0">
+        </label>
+        <label>How badly do we want it? (1 = meh, 10 = need it now): <span id="budget-weight-display">5</span>
+          <input type="range" id="budget-weight" min="1" max="10" value="5">
+        </label>
+        <label>Depends on (optional — must fund this other item first)
+          <select id="budget-dependson">
+            <option value="">None</option>
+          </select>
+        </label>
+        <button type="submit">Add to wishlist</button>
+      </form>
+
+      <div id="budget-list" class="entry-list"></div>
+    </section>
+
+    <section id="games">
+      <h2>Game Picker</h2>
+      <p>BUZZFEED: Which game is so you right now?</p>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const sections = document.querySelectorAll('main section');
+
+    buttons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const target = button.getAttribute('data-tab');
+
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+        button.classList.add('active');
+
+        sections.forEach(function(s) {
+          if (s.id === target) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+      });
+    });
+  </script>
+
+  <script type="module" src="firebase-init.js"></script>
+  <script type="module" src="diet.js"></script>
+  <script type="module" src="chores.js"></script>
+  <script type="module" src="budget.js"></script>
+
+</body>
+</html>
