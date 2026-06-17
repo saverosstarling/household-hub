@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--This tells the browser "this is a modern HTML documnet." Every HTML file starts with this -->
+<html lang="en"
+  <head>
+  <!-- The <head> only shows stuff ABOUT the page, nothing here is visible -->
+  <meta charset="UTF-8">
+  <!-- THis is telling the browser to read special characters like - correctly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Makes the page resize sensibly on phone screens instead of staying on desktop-sized. -->
+  <title>Our Lil Home Hub</title>
+  <!-- The text shown in the browser tab. Change this to whatever you want the title to be -->
+
+  <style>
+    /* This area is about how our site looks, NOT behavior */
+body {
+  font-family: BigNoodleTooOblique; 
+  margin: 0;                /* removes default white gap browsers put around pages */
+  background: #8A9A5B;      /* page background color */
+  color: #9069A6;          /* page text color */
+}
+header {
+  padding: 20px;     /* space insider the header, between edges and content */
+  text-align: center;     /* centers "Our Home Hub" title */
+  border-bottom; 2px solid #ccc;    /* a thine line under the header */
+}
+nav {
+  padding: 10px 18px;     /* space inside each button, so text isn't cramped */
+  border: none;           /* removes default button outline */
+  border-radius: 50px;     /* rounds the corners - try 0 for sharp corners, or 50 for pill shaped */
+  background: #ECBE52;     /* button color when NOT selected */
+  cursor: style="cursor: crosshair;"      /* shows a hand cursor on hover, signaling "clickable" */
+  font-size: 15px;
+}
+nav button.active {
+  /* This style only applies to whichever button is currently "active" or chosen. The stuff below allows me to edit based off of condition */
+  background: #D69141;  /* button color when selected */
+  color: white;
+}
+main {
+  max-width: 700px;      /* stops content from stretching too wide on a bigger screen */
+  margin: 0 auto;      /* centers horizontally */
+  padding: 20px;
+}
+section {
+  display: none;      /* by default, every tab's content is hidden */
+}
+section.active {
+  display: block;      /* showing nothing but the active class */
+}
+  </style>
+</head>
+  <body>
+    <!-- everything here will show up on the page -->
+
+    <header>
+      <h1>Our Lil Home Hub</h1>
+      <!-- Title of the page -->
+    </header>
+    
+    <nav>
+    <!-- buttons and tabs live here. Lower we will use these shortcodes to show what is in them -->
+      <button class="tab-button active" data-tab="Home">Home</button>button>
+      <!-- Acitve will be on the Home tab by default so it is what shows when you go to -->
+      <button class="tab-button" data-tab="diet">Dietary Diary</button>
+      <button class="tab-button" data-tab="chores">Chores</button>
+      <button class="tab-button" data-tab="budget">Budget</button>
+      <button class="tab-button" data-tab="games">Gamba</button>
+    </nav>
+
+  <main>
+    <!-- Right now just placeholders, but this is where the data and tools will eventually live -->
+
+    <section id="home" class="active">
+      <h2>Hello Lover</h2>
+      <p>This is the place we call home. It allows all of our musings to co-exist</p>
+    </section>
+ <section id="diet">
+      <h2>Dietary Diary</h2>
+      <p>How did that meal make you feel today?</p>
+    </section>
+
+    <section id="chores">
+      <h2>Chores</h2></h2>
+      <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
+    </section>
+
+    <section id="budget">
+      <h2>Budget</h2>
+      <p>Can we buy that? I'm so happy you asked</p>
+    </section>
+
+    <section id="games">
+      <h2>Game Picker</h2>
+      <p>BUZZFEED: WHich game is so you right now?</p>
+    </section>
+  </main>
+
+  <script>
+    // Grab every button that has the class "tab-button" and store them in a list called "buttons".
+    const buttons = document.querySelectorAll('.tab-button');
+
+    // Grab every <section> inside <main> — these are the five content blocks above.
+    const sections = document.querySelectorAll('main section');
+
+    // Go through each button one at a time...
+    buttons.forEach(function(button) {
+
+      // ...and tell it "when someone clicks you, run this code."
+     button.addEventListener('click', function() {
+
+      // Read the data-tab value off the button that was just clicked (e.g. "diet").
+     const target = button.getAttribute('data-tab');
+      // Remove "active" from every button first — clears the old highlight.
+     buttons.forEach(function(b) { b.classList.remove('active'); });
+
+        // Then add "active" to just the one that was clicked, so it gets highlighted.
+    button.classList.add('active');
+
+        // Now go through every section...
+    sections.forEach(function(s) {
+          if (s.id === target) {
+            // ...if this section's id matches the button's data-tab, show it.
+     s.classList.add('active');
+          } else {
+            // ...otherwise, hide it.
+      s.classList.remove('active');
+          }
+        });
+      });
+    });
+  </script>
+
+  </main>
+  </body>
