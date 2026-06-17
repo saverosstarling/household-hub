@@ -148,8 +148,12 @@
       opacity: 0.6;
       margin-bottom: 4px;
     }
+    .er-warning {
+      color: #c0392b;
+      font-weight: 700;
+      margin-top: 6px;
+    }
 
-    /* ===== CHORES ===== */
     .chore-card {
       display: flex;
       align-items: center;
@@ -218,71 +222,5 @@
         <label>What did you eat?
           <input type="text" id="diet-food" required>
         </label>
-        <label>How do you feel physically and mentally?
-          <textarea id="diet-notes" rows="2"></textarea>
-        </label>
-        <button type="submit">Log it</button>
-      </form>
-
-      <div id="diet-list" class="entry-list"></div>
-    </section>
-
-    <section id="chores">
-      <h2>Chores</h2>
-      <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
-
-      <form id="chores-form" class="entry-form">
-        <label>Task
-          <input type="text" id="chore-task" required>
-        </label>
-        <label>Who's doing it?
-          <input type="text" id="chore-who" placeholder="e.g. Olly, Sav, or Both">
-        </label>
-        <label>Due date
-          <input type="date" id="chore-due">
-        </label>
-        <button type="submit">Add to the list</button>
-      </form>
-
-      <div id="chores-list" class="entry-list"></div>
-    </section>
-
-    <section id="budget">
-      <h2>Budget</h2>
-      <p>Can we buy that? I'm so happy you asked</p>
-    </section>
-
-    <section id="games">
-      <h2>Game Picker</h2>
-      <p>BUZZFEED: Which game is so you right now?</p>
-    </section>
-  </main>
-
-  <script>
-    const buttons = document.querySelectorAll('.tab-button');
-    const sections = document.querySelectorAll('main section');
-
-    buttons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        const target = button.getAttribute('data-tab');
-
-        buttons.forEach(function(b) { b.classList.remove('active'); });
-        button.classList.add('active');
-
-        sections.forEach(function(s) {
-          if (s.id === target) {
-            s.classList.add('active');
-          } else {
-            s.classList.remove('active');
-          }
-        });
-      });
-    });
-  </script>
-
-  <script type="module" src="firebase-init.js"></script>
-  <script type="module" src="diet.js"></script>
-  <script type="module" src="chores.js"></script>
-
-</body>
-</html>
+        <label>Brain fog (0 = clear headed, 5 = so foggy)
+          <select
