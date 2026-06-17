@@ -18,7 +18,6 @@ const gameLibraryList = document.getElementById('game-library-list');
 gameAddForm.addEventListener('submit', async function(event) {
   event.preventDefault();
 
-  // Gather every checked tag checkbox into a simple list, e.g. ["Narrative", "Adventure"].
   const checkedTags = Array.from(document.querySelectorAll('.game-tag:checked')).map(function(cb) {
     return cb.value;
   });
@@ -26,6 +25,9 @@ gameAddForm.addEventListener('submit', async function(event) {
   await addDoc(gamesCollection, {
     name: document.getElementById('game-name').value,
     tags: checkedTags,
+    bio: document.getElementById('game-bio').value,
+    steamLink: document.getElementById('game-steam').value,
+    imageUrl: document.getElementById('game-image-url').value,
     createdAt: serverTimestamp()
   });
 
@@ -47,6 +49,7 @@ onSnapshot(gamesQuery, function(snapshot) {
     const card = document.createElement('div');
     card.className = 'entry-card';
     card.innerHTML = `
+      ${game.imageUrl ? `<img src="${game.imageUrl}" class="game-thumb" alt="${game.name}">` : ''}
       <strong>${game.name}</strong>
       <div class="entry-meta">${(game.tags || []).join(', ') || 'No tags yet'}</div>
       <button class="game-delete">&times; Remove</button>
@@ -71,7 +74,6 @@ quizForm.addEventListener('submit', function(event) {
     return;
   }
 
-  // Tally up points per tag based on your answers.
   const scores = {};
   function addPoint(tag) {
     scores[tag] = (scores[tag] || 0) + 1;
@@ -80,7 +82,6 @@ quizForm.addEventListener('submit', function(event) {
   addPoint(document.getElementById('quiz-q2').value);
   addPoint(document.getElementById('quiz-q3').value);
 
-  // Whichever tag scored highest "wins."
   let winningTag = null;
   let highestScore = -1;
   for (const tag in scores) {
@@ -90,7 +91,6 @@ quizForm.addEventListener('submit', function(event) {
     }
   }
 
-  // Every game in your library carrying that tag is a valid candidate.
   const matches = libraryCache.filter(function(game) {
     return (game.tags || []).includes(winningTag);
   });
@@ -100,13 +100,15 @@ quizForm.addEventListener('submit', function(event) {
     return;
   }
 
-  // More than one match? Random pick breaks the tie.
   const winner = matches[Math.floor(Math.random() * matches.length)];
 
   quizResult.innerHTML = `
     <div class="entry-card quiz-winner">
       <div class="entry-meta">Tonight's vibe: ${winningTag}</div>
+      ${winner.imageUrl ? `<img src="${winner.imageUrl}" class="game-thumb" alt="${winner.name}">` : ''}
       <strong style="font-size: 1.4em;">${winner.name}</strong>
+      ${winner.bio ? `<p>${winner.bio}</p>` : ''}
+      ${winner.steamLink ? `<p><a href="${winner.steamLink}" target="_blank" rel="noopener">View on Steam</a></p>` : ''}
     </div>
   `;
 });
