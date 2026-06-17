@@ -158,7 +158,6 @@
       margin-top: 6px;
     }
 
-    /* ===== SHARED "REMOVE" PILL BUTTONS ===== */
     .diet-delete {
       font-family: var(--font-body);
       font-weight: 600;
@@ -256,7 +255,6 @@
       transform: translateY(-2px);
     }
 
-    /* ===== HOME DASHBOARD HEATMAP ===== */
     .heatmap-table {
       width: 100%;
       border-collapse: collapse;
@@ -275,6 +273,35 @@
       font-weight: 700;
       opacity: 0.7;
       background: rgba(0,0,0,0.04);
+    }
+
+    .next-up-banner {
+      background: var(--color-nav-bg);
+      border: 2px solid var(--color-nav-active);
+      text-align: center;
+    }
+    .pie-chart {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      margin: 12px auto;
+    }
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+    .pie-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pie-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
     }
   </style>
 </head>
@@ -297,6 +324,9 @@
     <section id="Home" class="active">
       <h2>Hello Lover</h2>
       <p>This is the place we call home. It allows all of our musings to co-exist</p>
+
+      <h3>Budget Snapshot</h3>
+      <div id="budget-overview"></div>
 
       <h3>Olly's Diary Patterns</h3>
       <div id="olly-heatmap"></div>
@@ -402,3 +432,45 @@
             <option value="">None</option>
           </select>
         </label>
+        <button type="submit">Add to wishlist</button>
+      </form>
+
+      <div id="budget-list" class="entry-list"></div>
+    </section>
+
+    <section id="games">
+      <h2>Game Picker</h2>
+      <p>BUZZFEED: Which game is so you right now?</p>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const sections = document.querySelectorAll('main section');
+
+    buttons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const target = button.getAttribute('data-tab');
+
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+        button.classList.add('active');
+
+        sections.forEach(function(s) {
+          if (s.id === target) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+      });
+    });
+  </script>
+
+  <script type="module" src="firebase-init.js"></script>
+  <script type="module" src="diet.js"></script>
+  <script type="module" src="chores.js"></script>
+  <script type="module" src="budget.js"></script>
+  <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>
