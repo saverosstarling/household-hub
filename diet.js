@@ -54,8 +54,6 @@ onSnapshot(dietQuery, function(snapshot) {
       ? `<p class="er-warning">⚠️ You logged this as ER-level. Please don't ignore that.</p>`
       : '';
 
-    // Older entries logged before the Who dropdown existed won't have this
-    // field — show a clear placeholder instead of a blank or broken display.
     const who = entry.who || 'Unknown';
 
     card.innerHTML = `
