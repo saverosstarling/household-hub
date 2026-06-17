@@ -158,6 +158,24 @@
       margin-top: 6px;
     }
 
+    /* ===== SHARED "REMOVE" PILL BUTTONS ===== */
+    .diet-delete {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 50px;
+      background: #c0392b;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 8px;
+      transition: transform 0.15s ease;
+    }
+    .diet-delete:hover {
+      transform: translateY(-2px);
+    }
+
     .chore-card {
       display: flex;
       align-items: center;
@@ -174,15 +192,19 @@
       opacity: 0.5;
     }
     .chore-delete {
-      background: none;
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 8px 16px;
       border: none;
-      font-size: 18px;
+      border-radius: 50px;
+      background: #c0392b;
+      color: white;
       cursor: pointer;
-      color: #999;
-      padding: 0 6px;
+      font-size: 13px;
+      transition: transform 0.15s ease;
     }
     .chore-delete:hover {
-      color: #c0392b;
+      transform: translateY(-2px);
     }
 
     .budget-locked {
@@ -218,13 +240,20 @@
       background: var(--color-nav-bg);
       cursor: pointer;
     }
-    .budget-delete {
-      background: none !important;
-      color: #999;
-      font-size: 16px;
+    .budget-actions button.budget-delete {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 50px;
+      background: #c0392b;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.15s ease;
     }
-    .budget-delete:hover {
-      color: #c0392b;
+    .budget-actions button.budget-delete:hover {
+      transform: translateY(-2px);
     }
 
     /* ===== HOME DASHBOARD HEATMAP ===== */
@@ -373,45 +402,3 @@
             <option value="">None</option>
           </select>
         </label>
-        <button type="submit">Add to wishlist</button>
-      </form>
-
-      <div id="budget-list" class="entry-list"></div>
-    </section>
-
-    <section id="games">
-      <h2>Game Picker</h2>
-      <p>BUZZFEED: Which game is so you right now?</p>
-    </section>
-  </main>
-
-  <script>
-    const buttons = document.querySelectorAll('.tab-button');
-    const sections = document.querySelectorAll('main section');
-
-    buttons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        const target = button.getAttribute('data-tab');
-
-        buttons.forEach(function(b) { b.classList.remove('active'); });
-        button.classList.add('active');
-
-        sections.forEach(function(s) {
-          if (s.id === target) {
-            s.classList.add('active');
-          } else {
-            s.classList.remove('active');
-          }
-        });
-      });
-    });
-  </script>
-
-  <script type="module" src="firebase-init.js"></script>
-  <script type="module" src="diet.js"></script>
-  <script type="module" src="chores.js"></script>
-  <script type="module" src="budget.js"></script>
-  <script type="module" src="dashboard.js"></script>
-
-</body>
-</html>
