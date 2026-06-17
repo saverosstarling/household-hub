@@ -17,6 +17,7 @@ dietForm.addEventListener('submit', async function(event) {
   event.preventDefault();
 
   const date = document.getElementById('diet-date').value;
+  const who = document.getElementById('diet-who').value;
   const meal = document.getElementById('diet-meal').value;
   const food = document.getElementById('diet-food').value;
   const brainFog = document.getElementById('diet-brainfog').value;
@@ -24,6 +25,7 @@ dietForm.addEventListener('submit', async function(event) {
 
   await addDoc(dietCollection, {
     date: date,
+    who: who,
     meal: meal,
     food: food,
     brainFog: brainFog,
@@ -45,14 +47,12 @@ onSnapshot(dietQuery, function(snapshot) {
     const card = document.createElement('div');
     card.className = 'entry-card';
 
-    // defined "5" on the stomach pain scale as "call the ER" — so if
-    // someone logs a 5, surface a clear flag rather than burying it in a number.
     const erWarning = entry.stomachPain === '5'
       ? `<p class="er-warning">⚠️ You logged this as ER-level. Please don't ignore that.</p>`
       : '';
 
     card.innerHTML = `
-      <div class="entry-meta">${entry.date} — ${entry.meal}</div>
+      <div class="entry-meta">${entry.date} — ${entry.meal} — ${entry.who}</div>
       <strong>${entry.food}</strong>
       <p>Brain fog: ${entry.brainFog}/5 &nbsp;|&nbsp; Stomach pain: ${entry.stomachPain}/5</p>
       ${erWarning}
