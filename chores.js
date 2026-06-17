@@ -8,10 +8,12 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const choresCollection = collection(db, "chores");
+const themesDocRef = doc(db, "settings", "eveningThemes");
 
 const choresForm = document.getElementById('chores-form');
 const choresList = document.getElementById('chores-list');
@@ -34,12 +36,16 @@ choresForm.addEventListener('submit', async function(event) {
   choresForm.reset();
 });
 
-// Keep the latest chores around in memory so the calendar can redraw
-// itself instantly when you click prev/next month, with no extra database trip.
 let latestChores = [];
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
-let currentOpenDay = null; // tracks which day's panel is currently showing, if any
+let currentOpenDay = null;
+
+let themesSettings = {
+  mode: 'schedule',
+  themesList: ['Reading', 'Video Games', 'Quality Time', 'Game Night'],
+  schedule: {}
+};
 
 const choresQuery = query(choresCollection, orderBy('createdAt', 'desc'));
 
@@ -80,14 +86,114 @@ onSnapshot(choresQuery, function(snapshot) {
   });
 
   renderCalendar();
-
-  // If a day panel is currently open, refresh it too — this is what makes
-  // a chore you just added from inside the panel show up there instantly.
   if (currentOpenDay) {
     const dayChores = latestChores.filter(function(c) { return c.due === currentOpenDay; });
     showDayPanel(currentOpenDay, dayChores);
   }
 });
+
+// ----- Evening Themes settings -----
+
+const weekdayNamesFull = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const weekdaysForSchedule = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+
+onSnapshot(themesDocRef, function(docSnap) {
+  if (docSnap.exists()) {
+    themesSettings = docSnap.data();
+    if (!themesSettings.schedule) themesSettings.schedule = {};
+    if (!themesSettings.themesList) themesSettings.themesList = [];
+  } else {
+    // First time ever loading this — save sensible defaults so there's
+    // something to work with. This triggers this same listener again.
+    setDoc(themesDocRef, themesSettings);
+    return;
+  }
+  renderThemeSettings();
+  renderCalendar();
+});
+
+async function saveThemesSettings() {
+  await setDoc(themesDocRef, themesSettings);
+}
+
+function renderThemeSettings() {
+  const modeSelect = document.getElementById('theme-mode');
+  modeSelect.value = themesSettings.mode;
+
+  const scheduleEditor = document.getElementById('theme-schedule-editor');
+  if (themesSettings.mode === 'schedule') {
+    scheduleEditor.innerHTML = weekdaysForSchedule.map(function(day) {
+      const options = themesSettings.themesList.map(function(theme) {
+        const selected = themesSettings.schedule[day] === theme ? 'selected' : '';
+        return `<option value="${theme}" ${selected}>${theme}</option>`;
+      }).join('');
+      return `
+        <label>${day}
+          <select class="schedule-day-select" data-day="${day}">
+            <option value="">(none)</option>
+            ${options}
+          </select>
+        </label>
+      `;
+    }).join('');
+
+    scheduleEditor.querySelectorAll('.schedule-day-select').forEach(function(select) {
+      select.addEventListener('change', async function() {
+        themesSettings.schedule[select.dataset.day] = select.value;
+        await saveThemesSettings();
+      });
+    });
+  } else {
+    scheduleEditor.innerHTML = '<p class="entry-meta">Each weekday will get a theme randomly picked from your list below.</p>';
+  }
+
+  const listDisplay = document.getElementById('theme-list-display');
+  listDisplay.innerHTML = themesSettings.themesList.map(function(theme, index) {
+    return `<span class="theme-tag">${theme} <button class="theme-remove" data-index="${index}">&times;</button></span>`;
+  }).join('');
+
+  listDisplay.querySelectorAll('.theme-remove').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      themesSettings.themesList.splice(parseInt(btn.dataset.index), 1);
+      await saveThemesSettings();
+    });
+  });
+}
+
+document.getElementById('theme-mode').addEventListener('change', async function() {
+  themesSettings.mode = this.value;
+  await saveThemesSettings();
+});
+
+document.getElementById('theme-add-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const input = document.getElementById('new-theme-name');
+  const name = input.value.trim();
+  if (name && !themesSettings.themesList.includes(name)) {
+    themesSettings.themesList.push(name);
+    await saveThemesSettings();
+  }
+  input.value = '';
+});
+
+// Figures out what (if anything) tonight's theme is for a given date.
+// Weekends always return null — themes only exist Monday through Friday.
+function getThemeForDate(dateStr) {
+  const parts = dateStr.split('-').map(Number);
+  const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+  const weekday = dateObj.getDay();
+  if (weekday === 0 || weekday === 6) return null;
+  if (!themesSettings.themesList || themesSettings.themesList.length === 0) return null;
+
+  if (themesSettings.mode === 'schedule') {
+    const weekdayName = weekdayNamesFull[weekday];
+    return (themesSettings.schedule && themesSettings.schedule[weekdayName]) || null;
+  } else {
+    const seed = parseInt(dateStr.replace(/-/g, ''));
+    const index = seed % themesSettings.themesList.length;
+    return themesSettings.themesList[index];
+  }
+}
 
 // ----- Calendar -----
 
@@ -125,6 +231,7 @@ function renderCalendar() {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const dayChores = choresByDate[dateStr] || [];
     const openCount = dayChores.filter(function(c) { return !c.done; }).length;
+    const theme = getThemeForDate(dateStr);
 
     let cellClass = 'calendar-cell';
     if (dayChores.length > 0) {
@@ -134,6 +241,7 @@ function renderCalendar() {
     html += `
       <div class="${cellClass}" data-date="${dateStr}">
         <div class="calendar-day-number">${day}</div>
+        ${theme ? `<div class="calendar-theme">${theme}</div>` : ''}
         ${dayChores.length > 0 ? `<div class="calendar-dot-count">${dayChores.length}</div>` : ''}
       </div>
     `;
@@ -152,6 +260,7 @@ function renderCalendar() {
 function showDayPanel(dateStr, dayChores) {
   currentOpenDay = dateStr;
   const panel = document.getElementById('chores-day-panel');
+  const theme = getThemeForDate(dateStr);
 
   const listHtml = dayChores.map(function(c) {
     return `
@@ -166,6 +275,7 @@ function showDayPanel(dateStr, dayChores) {
 
   panel.innerHTML = `
     <h4>${dateStr}</h4>
+    ${theme ? `<p class="entry-meta">Tonight's theme: <strong>${theme}</strong></p>` : ''}
     ${listHtml || '<p class="entry-meta">Nothing scheduled yet.</p>'}
     <form id="day-add-form" class="entry-form">
       <label>Add a chore for this day
