@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<!--This tells the browser "this is a modern HTML documnet." Every HTML file starts with this -->
-<html lang="en"
-  <head>
-  <!-- The <head> only shows stuff ABOUT the page, nothing here is visible -->
+<html lang="en">
+<head>
   <meta charset="UTF-8">
-  <!-- THis is telling the browser to read special characters like - correctly -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Makes the page resize sensibly on phone screens instead of staying on desktop-sized. -->
   <title>Our Lil Home Hub</title>
-  <!-- The text shown in the browser tab. Change this to whatever you want the title to be -->
 
   <style>
-    /* ===== CUSTOM FONTS =====
-       Each rule loads one file you uploaded and gives it a name to use below. */
     @font-face {
       font-family: 'OrbitronBlack';
       src: url('OrbitronBlack-y4XZ.otf') format('opentype');
@@ -21,129 +14,120 @@
       font-family: 'BigNoodleTitling';
       src: url('big_noodle_titling_oblique.ttf') format('truetype');
     }
-    
- /* ===== VARIABLES =====
-       Change any value here and it updates everywhere that variable is used.
-       This is your site's "control panel" for looks. */
-:root {
-  --color-bg: #8A9A5B;     /* page background */
-  --color-card-bg: #ECE580;      /*b ackground of each tab's content card */
-  --color-text: #3b3b3b;      /* body text color, on our card */
-  --color-heading: #9069A6;      /* color of Titles */
-  --color-nav-bg: #ECBE52;      /* button color when NOT selected */
-  --color-nav-active: #D69141      /* button color when selected */
 
-  --font-heading: 'BigNoodleTitling', sans-serif;
-  --font-body: 'OrbitronBlack', sans-serif;
-}
-    /* This area is about how our site looks, NOT behavior */
-body {
+    :root {
+      --color-bg: #8A9A5B;
+      --color-card-bg: #ECE580;
+      --color-text: #3b3b3b;
+      --color-heading: #9069A6;
+      --color-nav-bg: #ECBE52;
+      --color-nav-active: #D69141;
+
+      --font-heading: 'BigNoodleTitling', sans-serif;
+      --font-body: 'OrbitronBlack', sans-serif;
+    }
+
+    body {
       font-family: var(--font-body);
       margin: 0;
       background: var(--color-bg);
       color: var(--color-text);
-}
-      
-header {
-  padding: 30px 20px 10px;     /* space insider the header, between edges and content */
-  text-align: center;     /* centers "Our Home Hub" title */
-  border-bottom: 2px solid #ccc;    /* a thine line under the header */
-}
-
-header h1 {
-  font-family: var(--font-heading);
-  color: var(--color-heading);
-  margin: 0;
-  font-size: 2.5rem;
     }
-      
-nav {
+
+    header {
+      padding: 30px 20px 10px;
+      text-align: center;
+      border-bottom: 2px solid #ccc;
+    }
+    header h1 {
+      font-family: var(--font-heading);
+      color: var(--color-heading);
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    #connection-status {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-top: 6px;
+    }
+
+    nav {
       display: flex;
       justify-content: center;
       gap: 10px;
       padding: 20px;
       flex-wrap: wrap;
     }
-nav button {
-  font-family: var(--font-body);
-  font-weight: 600;
-  padding: 10px 20px;
+    nav button {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding: 10px 20px;
       border: none;
-      border-radius: 50px;       /* your pill shape, now correctly targeting the buttons */
-      background: var(color-nav-bg);
-      cursor: crosshair;          /* fixed syntax */
+      border-radius: 50px;
+      background: var(--color-nav-bg);
+      cursor: crosshair;
       font-size: 15px;
       transition: transform 0.15s ease;
     }
+    nav button:hover {
+      transform: translateY(-2px);
+    }
+    nav button.active {
+      background: #D69141;
+      color: orange;
+    }
 
-nav button hover {
-  transform: translateY(-2px);
-}
-      
-nav button.active {
-  /* This style only applies to whichever button is currently "active" or chosen. The stuff below allows me to edit based off of condition */
-  background: #D69141;  /* button color when selected */
-  color: orange;
-}
-      
-main {
-  max-width: 700px;      /* stops content from stretching too wide on a bigger screen */
-  margin: 0 auto;      /* centers horizontally */
-  padding: 0 20px 40px;
-}
-section {
-  display: none;      /* by default, every tab's content is hidden */
-  background: var(--color-card-bg);
+    main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    section {
+      display: none;
+      background: var(--color-card-bg);
       border-radius: 16px;
       padding: 30px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-      
-section.active {
-  display: block;      /* showing nothing but the active class */
-}
-
-section h2 {
+    }
+    section.active {
+      display: block;
+    }
+    section h2 {
       font-family: var(--font-heading);
       color: var(--color-heading);
       margin-top: 0;
-}
-    
+    }
   </style>
 </head>
-  <body>
-    <!-- everything here will show up on the page -->
+<body>
 
-    <header>
-      <h1>Our Lil Home Hub</h1>
-      <!-- Title of the page -->
-    </header>
-    
-    <nav>
-    <!-- buttons and tabs live here. Lower we will use these shortcodes to show what is in them -->
-      <button class="tab-button active" data-tab="Home">Home</button>
-      <!-- Acitve will be on the Home tab by default so it is what shows when you go to -->
-      <button class="tab-button" data-tab="diet">Dietary Diary</button>
-      <button class="tab-button" data-tab="chores">Chores</button>
-      <button class="tab-button" data-tab="budget">Budget</button>
-      <button class="tab-button" data-tab="games">Gamba</button>
-    </nav>
+  <header>
+    <h1>Our Lil Home Hub</h1>
+    <p id="connection-status">Connecting...</p>
+  </header>
+
+  <nav>
+    <button class="tab-button active" data-tab="Home">Home</button>
+    <button class="tab-button" data-tab="diet">Dietary Diary</button>
+    <button class="tab-button" data-tab="chores">Chores</button>
+    <button class="tab-button" data-tab="budget">Budget</button>
+    <button class="tab-button" data-tab="games">Gamba</button>
+  </nav>
 
   <main>
-    <!-- Right now just placeholders, but this is where the data and tools will eventually live -->
-
     <section id="Home" class="active">
       <h2>Hello Lover</h2>
       <p>This is the place we call home. It allows all of our musings to co-exist</p>
     </section>
-    
- <section id="diet">
+
+    <section id="diet">
       <h2>Dietary Diary</h2>
       <p>How did that meal make you feel today?</p>
     </section>
 
     <section id="chores">
-      <h2>Chores</h2></h2>
+      <h2>Chores</h2>
       <p>Chores and evening planning. A place for us to get ahead, catch up, or be right on time</p>
     </section>
 
@@ -159,39 +143,31 @@ section h2 {
   </main>
 
   <script>
-    // Grab every button that has the class "tab-button" and store them in a list called "buttons".
     const buttons = document.querySelectorAll('.tab-button');
-
-    // Grab every <section> inside <main> — these are the five content blocks above.
     const sections = document.querySelectorAll('main section');
 
-    // Go through each button one at a time...
     buttons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const target = button.getAttribute('data-tab');
 
-      // ...and tell it "when someone clicks you, run this code."
-     button.addEventListener('click', function() {
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+        button.classList.add('active');
 
-      // Read the data-tab value off the button that was just clicked (e.g. "diet").
-     const target = button.getAttribute('data-tab');
-      // Remove "active" from every button first — clears the old highlight.
-     buttons.forEach(function(b) { b.classList.remove('active'); });
-
-        // Then add "active" to just the one that was clicked, so it gets highlighted.
-    button.classList.add('active');
-
-        // Now go through every section...
-    sections.forEach(function(s) {
+        sections.forEach(function(s) {
           if (s.id === target) {
-            // ...if this section's id matches the button's data-tab, show it.
-     s.classList.add('active');
+            s.classList.add('active');
           } else {
-            // ...otherwise, hide it.
-      s.classList.remove('active');
+            s.classList.remove('active');
           }
         });
       });
     });
   </script>
+
+  <script type="module" src="firebase-init.js"></script>
+
+</body>
+</html>
 
   </main>
   </body>
